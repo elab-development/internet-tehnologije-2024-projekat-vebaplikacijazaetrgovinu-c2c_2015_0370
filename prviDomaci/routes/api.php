@@ -26,6 +26,9 @@ Route::get('/products/{id}', [ProductController::class, 'show']);
 
 Route::get('/reviews', [ReviewController::class, 'index']);
 Route::get('/reviews/{id}', [ReviewController::class, 'show']);
+ 
+  Route::get('/reviews/user/{user_id}', [ReviewController::class, 'getReviewsByUser']);
+  Route::get('/reviews/product/{product_id}', [ReviewController::class, 'getReviewsByProduct']);
 
 Route::middleware('auth:sanctum')->group(function () {
   

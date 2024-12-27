@@ -83,4 +83,35 @@ class ReviewController extends Controller
 
         return response()->json(['message' => 'Review deleted successfully.'], 200);
     }
+
+
+
+    /**
+     * Display all reviews for a specific user.
+     */
+    public function getReviewsByUser($user_id)
+    {
+        $reviews = Review::where('user_id', $user_id)->get();
+
+        if ($reviews->isEmpty()) {
+            return response()->json(['message' => 'No reviews found for this user.'], 404);
+        }
+
+        return response()->json($reviews, 200);
+    }
+
+    /**
+     * Display all reviews for a specific product.
+     */
+    public function getReviewsByProduct($product_id)
+    {
+        $reviews = Review::where('product_id', $product_id)->get();
+
+        if ($reviews->isEmpty()) {
+            return response()->json(['message' => 'No reviews found for this product.'], 404);
+        }
+
+        return response()->json($reviews, 200);
+    }
+
 }
