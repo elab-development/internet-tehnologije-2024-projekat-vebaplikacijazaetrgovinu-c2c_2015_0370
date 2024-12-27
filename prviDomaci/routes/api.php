@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 
 use App\Http\Controllers\ReviewController;
@@ -42,6 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/reviews', [ReviewController::class, 'store']);   
     Route::put('/reviews/{id}', [ReviewController::class, 'update']);
     Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
+
+
+    Route::apiResource('orders', OrderController::class);
 });
 
 
