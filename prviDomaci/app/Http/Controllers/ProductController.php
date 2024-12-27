@@ -14,7 +14,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::where('user_id', Auth::id())->get();
+        $products = Product::all();
         return response()->json($products, 200);
     }
 
@@ -96,4 +96,18 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Product deleted successfully.'], 200);
     }
+    /**
+     * Display all products for a specific user by user_id.
+     */
+    public function getProductsByUserId($user_id)
+    {
+        $products = Product::where('user_id', $user_id)->get();
+
+        if ($products->isEmpty()) {
+            return response()->json(['message' => 'No products found for this user.'], 404);
+        }
+
+        return response()->json($products, 200);
+    }
+
 }
