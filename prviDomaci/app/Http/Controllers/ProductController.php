@@ -25,7 +25,7 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'nullable|integer|min:0',
             'category' => 'nullable|string|max:255',
@@ -69,7 +69,7 @@ class ProductController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'nullable|integer|min:0',
             'category' => 'nullable|string|max:255',
