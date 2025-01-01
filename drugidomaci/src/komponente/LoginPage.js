@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
- 
+import Button from './Button';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -13,7 +13,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post( 'http://127.0.0.1:8000/api/login', {
+      const response = await axios.post('http://127.0.0.1:8000/api/login', {
         email,
         password,
       });
@@ -27,9 +27,7 @@ const LoginPage = () => {
       // Navigate to /home
       navigate('/home');
     } catch (error) {
-      setError(
-        error.response?.data?.message || 'Login failed. Please try again.'
-      );
+      setError(error.response?.data?.message || 'Login failed. Please try again.');
     }
   };
 
@@ -59,7 +57,7 @@ const LoginPage = () => {
             />
           </div>
           {error && <p className="error-message">{error}</p>}
-          <button type="submit" className="login-button">Login</button>
+          <Button text="Login" type="submit" className="primary" />
         </form>
       </div>
     </div>

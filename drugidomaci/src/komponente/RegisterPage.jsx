@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
- 
+import Button from './Button';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -25,7 +25,7 @@ const RegisterPage = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://your-api-domain.com/api/register', formData);
+      const response = await axios.post('http://127.0.0.1:8000/api/register', formData);
 
       const { token, user } = response.data;
 
@@ -129,7 +129,7 @@ const RegisterPage = () => {
             ></textarea>
           </div>
           {error && <p className="error-message">{JSON.stringify(error)}</p>}
-          <button type="submit" className="register-button">Register</button>
+          <Button text="Register" type="submit" className="primary" />
         </form>
       </div>
     </div>
