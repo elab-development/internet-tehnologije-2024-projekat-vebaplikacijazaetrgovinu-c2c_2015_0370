@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import Button from './Button';
 import InputField from './InputField';
 
-const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const LoginPage = ({ setAuthData }) => {
+  const [email, setEmail] = useState('jelena.kondic33@gmail.com');
+  const [password, setPassword] = useState('jelena.kondic3');
+  const [keepSignedIn, setKeepSignedIn] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -21,11 +22,19 @@ const LoginPage = () => {
 
       const { token, user } = response.data;
 
-      // Save token and user in local storage
-      localStorage.setItem('auth_token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      // Čuvanje u localStorage ili sessionStorage
+      if (keepSignedIn) {
+        localStorage.setItem('auth_token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+      } else {
+        sessionStorage.setItem('auth_token', token);
+        sessionStorage.setItem('user', JSON.stringify(user));
+      }
 
-      // Navigate to /home
+      // Postavljanje globalnog stanja
+      setAuthData({ token, user });
+
+      // Navigacija na /home
       navigate('/home');
     } catch (error) {
       setError(error.response?.data?.message || 'Login failed. Please try again.');
@@ -53,6 +62,16 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <div className="form-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={keepSignedIn}
+                onChange={() => setKeepSignedIn(!keepSignedIn)}
+              />
+              Keep me signed in
+            </label>
+          </div>
           {error && <p className="error-message">{error}</p>}
           <Button text="Login" type="submit" className="primary" />
         </form>

@@ -545,3 +545,51 @@ body {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0078d7;
+  color: white;
+  padding: 10px 20px;
+}
+
+.header .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.header .auth-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.header .auth-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: white;
+}
+
+.header .auth-buttons .login-button {
+  background-color: #00b295;
+}
+
+.header .auth-buttons .register-button {
+  background-color: #005a99;
+}
+
+.header .auth-buttons .logout-button {
+  background-color: #d9534f;
+}
+
+.header .auth-buttons .home-button {
+  background-color: #0056b3;
+}
+
+.header .auth-buttons button:hover {
+  opacity: 0.9;
+}
