@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -56,8 +57,15 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        $product = Product::where('user_id', Auth::id())->findOrFail($id);
-        return response()->json($product, 200);
+        $product = Product::findOrFail($id);
+    
+        // Izračunavanje prosečne ocene
+        $averageRating = Review::where('product_id', $id)->avg('rating');
+    
+        return response()->json([
+            'product' => $product,
+            'average_rating' => $averageRating ?? 0, // Ako nema ocena, vraća se 0
+        ], 200);
     }
 
     /**

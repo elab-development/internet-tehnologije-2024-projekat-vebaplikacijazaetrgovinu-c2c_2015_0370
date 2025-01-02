@@ -19,7 +19,7 @@ use App\Http\Controllers\ReviewController;
 */
 
  
-
+Route::get('/products/{id}', [ProductController::class, 'show']); //vraca sve detalje o pojedinacnom proizvodu kao i prosecnu ocenu, dodato za react domaci
 
 Route::get('/products/user/{user_id}', [ProductController::class, 'getProductsByUserId']);
 Route::get('/products', [ProductController::class, 'index']);

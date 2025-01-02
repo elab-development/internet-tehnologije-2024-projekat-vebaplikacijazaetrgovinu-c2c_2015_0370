@@ -1,13 +1,14 @@
  
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ProductCard from './ProductCard';
- 
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -43,6 +44,7 @@ const ProductsPage = () => {
             price={product.price}
             imageUrl={product.image_url}
             category={product.category}
+            onDetailsClick={() => navigate(`/product/${product.id}`)}
           />
         ))}
       </div>
