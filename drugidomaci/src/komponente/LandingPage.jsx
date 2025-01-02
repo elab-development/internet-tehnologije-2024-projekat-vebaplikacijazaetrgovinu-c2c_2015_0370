@@ -3,8 +3,8 @@ import Navbar from './Navbar';
 const LandingPage = () => {
   return (
     <div className="landing-page">
-      {/* Navbar Section */}
-      <Navbar />
+    
+    
 
       {/* Categories Section */}
       <section className="categories">
