@@ -5,6 +5,7 @@ import LandingPage from './komponente/LandingPage';
 import RegisterPage from './komponente/RegisterPage';
 import LoginPage from './komponente/LoginPage';
 import Navbar from './komponente/Navbar';
+import ProductsPage from './komponente/ProductsPage';
 
 function App() {
   const [authData, setAuthData] = useState({
@@ -28,6 +29,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage setAuthData={setAuthData} />} />
+          <Route path="/home" element={<ProductsPage />} />
         </Routes>
       </div>
     </Router>
