@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import StarRating from './StarRating';
+import ReviewComponent from './ReviewComponent'; // Uvozimo ReviewComponent
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
   const [productData, setProductData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const token = localStorage.getItem('auth_token'); // Pretpostavljamo da je token sačuvan u localStorage
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -23,6 +26,27 @@ const ProductDetailsPage = () => {
 
     fetchProductDetails();
   }, [id]);
+
+  const handleSubmitReview = async (rating, comment) => {
+    try {
+      await axios.post(
+        'http://127.0.0.1:8000/api/reviews',
+        {
+          rating,
+          comment,
+          product_id: id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setReviewSubmitted(true);
+    } catch (err) {
+      setError('Greška pri slanju recenzije.');
+    }
+  };
 
   if (loading) {
     return <div>Učitavanje detalja proizvoda...</div>;
@@ -46,6 +70,12 @@ const ProductDetailsPage = () => {
       <p><strong>Prosečna ocena:</strong> 
         <StarRating rating={parseFloat(average_rating)} />
       </p>
+
+      {!reviewSubmitted ? (
+        <ReviewComponent onSubmitReview={handleSubmitReview} /> // Dodajemo ReviewComponent
+      ) : (
+        <p>Hvala na oceni i komentaru!</p>
+      )}
     </div>
   );
 };
