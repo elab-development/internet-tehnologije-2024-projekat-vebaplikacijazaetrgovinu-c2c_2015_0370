@@ -32,6 +32,12 @@ function App() {
           <Route path="/login" element={<LoginPage setAuthData={setAuthData} />} />
           <Route path="/home" element={<ProductsPage />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />
+
+
+
+
+
+          
         </Routes>
       </div>
     </Router>

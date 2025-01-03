@@ -14,7 +14,7 @@ const ProductDetailsPage = () => {
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [reviewsToShow, setReviewsToShow] = useState(5); // Broj recenzija koje se prikazuju
   const [sortBy, setSortBy] = useState('newest'); // Trenutni kriterijum sortiranja
-  const token = localStorage.getItem('auth_token');
+  const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
 
   useEffect(() => {
     const fetchProductDetails = async () => {

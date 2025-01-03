@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
             'price' => 85000.99,
             'stock' => 5,
             'category' => 'Elektronika',
-            'image_url' => 'https://example.com/laptop.jpg',
+            'image_url' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0lHppfEO1g4XD_F4Reirnc7KAYMu0Sb57iHhx-2c8blksDp-Lh3lRCzvErseGr4jDEn8&usqp=CAU',
             'status' => 'active',
             'user_id' => $user1->id,
         ]);
@@ -58,7 +58,7 @@ class DatabaseSeeder extends Seeder
             'price' => 65000.50,
             'stock' => 3,
             'category' => 'Elektronika',
-            'image_url' => 'https://example.com/phone.jpg',
+            'image_url' => 'https://images.samsung.com/is/image/samsung/p6pim/rs/sm-a165fzkceuc/gallery/rs-galaxy-a16-sm-a165-sm-a165fzkceuc-thumb-544210173?$528_528_PNG$',
             'status' => 'active',
             'user_id' => $user1->id,
         ]);
@@ -69,7 +69,7 @@ class DatabaseSeeder extends Seeder
             'price' => 1500.00,
             'stock' => 20,
             'category' => 'Knjige',
-            'image_url' => 'https://example.com/book.jpg',
+            'image_url' => 'https://www.knjizare-vulkan.rs/files/images/slike_proizvoda/337252.jpg',
             'status' => 'active',
             'user_id' => $user2->id,
         ]);

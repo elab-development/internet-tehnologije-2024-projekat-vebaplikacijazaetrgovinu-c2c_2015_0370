@@ -756,3 +756,88 @@ body {
   width: 24px;
   height: 24px;
 }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  }
+  
+  .login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #0078d7, #00b295);
+  }
+  
+  .login-form-container {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  }
+  
+  .login-form-container h2 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  color: #333;
+  }
+  
+  .form-group {
+  margin-bottom: 15px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  }
+  
+  .form-group label {
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  margin: 0;
+  }
+  
+  .form-group input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #00b295;
+  }
+  
+  .form-group input[type="checkbox"]:focus {
+  outline: 2px solid #0078d7;
+  outline-offset: 2px;
+  }
+  
+  .input-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  }
+  
+  .error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  }
+  
+  .primary-button {
+  background-color: #00b295;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+  }
+  
+  .primary-button:hover {
+  background-color: #0078d7;
+  }
