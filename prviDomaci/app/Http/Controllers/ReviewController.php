@@ -99,13 +99,14 @@ class ReviewController extends Controller
 
         return response()->json($reviews, 200);
     }
-
     /**
-     * Display all reviews for a specific product.
+     * Display all reviews for a specific product with user names.
      */
     public function getReviewsByProduct($product_id)
     {
-        $reviews = Review::where('product_id', $product_id)->get();
+        $reviews = Review::where('product_id', $product_id)
+            ->with('user:id,name') // Učitavamo samo ID i ime korisnika
+            ->get();
 
         if ($reviews->isEmpty()) {
             return response()->json(['message' => 'No reviews found for this product.'], 404);
@@ -113,5 +114,6 @@ class ReviewController extends Controller
 
         return response()->json($reviews, 200);
     }
+
 
 }

@@ -2,30 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import StarRating from './StarRating';
-import ReviewComponent from './ReviewComponent'; // Uvozimo ReviewComponent
+import ReviewComponent from './ReviewComponent';
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
   const [productData, setProductData] = useState(null);
+  const [allReviews, setAllReviews] = useState([]); // Sve recenzije
+  const [visibleReviews, setVisibleReviews] = useState([]); // Prikazane recenzije
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  const token = localStorage.getItem('auth_token'); // Pretpostavljamo da je token sačuvan u localStorage
+  const [reviewsToShow, setReviewsToShow] = useState(5); // Broj recenzija koje se prikazuju
+  const token = localStorage.getItem('auth_token');
 
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/products/${id}`);
-        setProductData(response.data);
+        const productResponse = await axios.get(`http://127.0.0.1:8000/api/products/${id}`);
+        const reviewsResponse = await axios.get(`http://127.0.0.1:8000/api/reviews/product/${id}`);
+        setProductData(productResponse.data);
+        setAllReviews(reviewsResponse.data); // Učitavamo sve recenzije odjednom
+        setVisibleReviews(reviewsResponse.data.slice(0, 5)); // Prikazujemo samo prvih 5
         setLoading(false);
       } catch (err) {
-        setError('Greška pri učitavanju detalja proizvoda.');
+        setError('Greška pri učitavanju detalja proizvoda ili recenzija.');
         setLoading(false);
       }
     };
 
     fetchProductDetails();
   }, [id]);
+
+  const loadMoreReviews = () => {
+    const nextReviews = allReviews.slice(visibleReviews.length, visibleReviews.length + 5);
+    setVisibleReviews((prevReviews) => [...prevReviews, ...nextReviews]);
+    setReviewsToShow((prevCount) => prevCount + 5);
+  };
 
   const handleSubmitReview = async (rating, comment) => {
     try {
@@ -43,6 +55,9 @@ const ProductDetailsPage = () => {
         }
       );
       setReviewSubmitted(true);
+      const reviewsResponse = await axios.get(`http://127.0.0.1:8000/api/reviews/product/${id}`);
+      setAllReviews(reviewsResponse.data);
+      setVisibleReviews(reviewsResponse.data.slice(0, reviewsToShow)); // Ažuriramo vidljive recenzije
     } catch (err) {
       setError('Greška pri slanju recenzije.');
     }
@@ -72,9 +87,21 @@ const ProductDetailsPage = () => {
       </p>
 
       {!reviewSubmitted ? (
-        <ReviewComponent onSubmitReview={handleSubmitReview} /> // Dodajemo ReviewComponent
+        <ReviewComponent onSubmitReview={handleSubmitReview} />
       ) : (
         <p>Hvala na oceni i komentaru!</p>
+      )}
+
+      <h3>Recenzije</h3>
+      {visibleReviews.map((review) => (
+        <div key={review.id} className="review">
+          <StarRating rating={review.rating} />
+          <p>{review.comment}</p>
+          <p><em>{new Date(review.created_at).toLocaleDateString()}</em></p>
+        </div>
+      ))}
+      {visibleReviews.length < allReviews.length && (
+        <button onClick={loadMoreReviews}>Prikaži još</button>
       )}
     </div>
   );
