@@ -44,11 +44,8 @@ const LandingPage = () => {
 
   return (
     <div className="landing-page">
-      {/* Search Section */}
-      <header className="search-header">
-        <h1>Kupuj & Prodaj</h1>
-       
-      </header>
+     
+     
 
       {/* About Us Section */}
       <section className="about-us">
@@ -76,7 +73,7 @@ const LandingPage = () => {
 
       {/* Featured Ads Section */}
       <section className="featured-ads">
-        <h2>Istaknuti Proizvodi</h2>
+        <h2>Istaknuti proizvodi</h2>
         <div className="search-bar">
           <input
             type="text"

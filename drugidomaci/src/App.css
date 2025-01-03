@@ -678,3 +678,81 @@ body {
   font-size: 1.5rem;
   color: gold;
 }
+/* CSS for ProductDetailsPage */
+.product-details-page {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+.product-details-page h1 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.product-details-page img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.product-details-page p {
+  font-size: 16px;
+  margin: 5px 0;
+  color: #555;
+}
+
+.product-details-page p strong {
+  color: #333;
+}
+
+/* CSS for StarRating */
+.star-rating {
+  display: inline-flex;
+  align-items: center;
+  font-size: 20px;
+  color: #ffcc00;
+  position: relative;
+  line-height: 1;
+}
+
+.star-rating span {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background: linear-gradient(90deg, #ffcc00 50%, #e0e0e0 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.star-rating span.full {
+  background: #ffcc00;
+}
+
+.star-rating span.half {
+  background: linear-gradient(90deg, #ffcc00 50%, #e0e0e0 50%);
+}
+
+.star-rating span.empty {
+  background: #e0e0e0;
+}
+
+.star-rating span:not(:last-child) {
+  margin-right: 2px;
+}
+.star-rating {
+  display: flex;
+  gap: 4px;
+}
+
+.star {
+  width: 24px;
+  height: 24px;
+}
