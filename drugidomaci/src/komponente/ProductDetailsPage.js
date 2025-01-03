@@ -13,6 +13,7 @@ const ProductDetailsPage = () => {
   const [error, setError] = useState(null);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [reviewsToShow, setReviewsToShow] = useState(5); // Broj recenzija koje se prikazuju
+  const [sortBy, setSortBy] = useState('newest'); // Trenutni kriterijum sortiranja
   const token = localStorage.getItem('auth_token');
 
   useEffect(() => {
@@ -63,6 +64,27 @@ const ProductDetailsPage = () => {
     }
   };
 
+  const handleSortChange = (event) => {
+    const sortKey = event.target.value;
+    setSortBy(sortKey);
+
+    const sortedReviews = [...allReviews].sort((a, b) => {
+      if (sortKey === 'newest') {
+        return new Date(b.created_at) - new Date(a.created_at);
+      } else if (sortKey === 'oldest') {
+        return new Date(a.created_at) - new Date(b.created_at);
+      } else if (sortKey === 'highest_rating') {
+        return b.rating - a.rating;
+      } else if (sortKey === 'lowest_rating') {
+        return a.rating - b.rating;
+      }
+      return 0;
+    });
+
+    setAllReviews(sortedReviews);
+    setVisibleReviews(sortedReviews.slice(0, reviewsToShow));
+  };
+
   if (loading) {
     return <div>Učitavanje detalja proizvoda...</div>;
   }
@@ -93,8 +115,19 @@ const ProductDetailsPage = () => {
       )}
 
       <h3>Recenzije</h3>
+      <div>
+        <label htmlFor="sort-reviews">Sortiraj po: </label>
+        <select id="sort-reviews" value={sortBy} onChange={handleSortChange}>
+          <option value="newest">Najnovije</option>
+          <option value="oldest">Najstarije</option>
+          <option value="highest_rating">Najviše ocene</option>
+          <option value="lowest_rating">Najniže ocene</option>
+        </select>
+      </div>
+
       {visibleReviews.map((review) => (
         <div key={review.id} className="review">
+          <p><strong>{review.user?.name}</strong></p> {/* Prikaz imena korisnika */}
           <StarRating rating={review.rating} />
           <p>{review.comment}</p>
           <p><em>{new Date(review.created_at).toLocaleDateString()}</em></p>
