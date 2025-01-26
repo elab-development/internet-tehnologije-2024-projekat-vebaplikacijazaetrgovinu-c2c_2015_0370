@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const ProductsTable = () => {
   const [products, setProducts] = useState([]);
@@ -8,19 +9,18 @@ const ProductsTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCriteria, setFilterCriteria] = useState('name');
   const [newProduct, setNewProduct] = useState({ name: '', description: '', price: '', category: '', stock: '', status: 'active' });
+  const [editProductId, setEditProductId] = useState(null);
   const [categories, setCategories] = useState(['Elektronika', 'Odeća', 'Hrana', 'Igračke', 'Nameštaj']);
-  const token = localStorage.getItem('authToken');
+  const token = localStorage.getItem('auth_token') || sessionStorage.getItem("auth_token");
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // Simulate API call
-        const mockProducts = [
-          { id: 1, name: 'Laptop', description: '15.6 inch laptop', price: 80000, category: 'Elektronika', stock: 5, status: 'active' },
-          { id: 2, name: 'Majica', description: 'Pamuk', price: 2000, category: 'Odeća', stock: 15, status: 'active' },
-        ];
-        setProducts(mockProducts);
-        setFilteredProducts(mockProducts);
+        const response = await axios.get('http://127.0.0.1:8000/api/products', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setProducts(response.data);
+        setFilteredProducts(response.data);
         setLoading(false);
       } catch (err) {
         setError('Greška pri učitavanju proizvoda.');
@@ -45,21 +45,49 @@ const ProductsTable = () => {
     setFilteredProducts(products);
   };
 
-  const handleAddProduct = () => {
-    if (!categories.includes(newProduct.category) && newProduct.category) {
-      setCategories([...categories, newProduct.category]);
+  const handleAddOrUpdateProduct = async () => {
+    try {
+      if (editProductId) {
+        // Update existing product
+        const response = await axios.put(`http://127.0.0.1:8000/api/products/${editProductId}`, newProduct, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const updatedProducts = products.map((product) =>
+          product.id === editProductId ? response.data.product : product
+        );
+        setProducts(updatedProducts);
+        setFilteredProducts(updatedProducts);
+        setEditProductId(null);
+      } else {
+        // Add new product
+        const response = await axios.post('http://127.0.0.1:8000/api/products', newProduct, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setProducts([...products, response.data.product]);
+        setFilteredProducts([...products, response.data.product]);
+      }
+      setNewProduct({ name: '', description: '', price: '', category: '', stock: '', status: 'active' });
+    } catch (err) {
+      alert('Greška pri dodavanju ili ažuriranju proizvoda.');
     }
-
-    const newProductWithId = { ...newProduct, id: products.length + 1 };
-    setProducts([...products, newProductWithId]);
-    setFilteredProducts([...products, newProductWithId]);
-    setNewProduct({ name: '', description: '', price: '', category: '', stock: '', status: 'active' });
   };
 
-  const handleDeleteProduct = (id) => {
-    const updatedProducts = products.filter((product) => product.id !== id);
-    setProducts(updatedProducts);
-    setFilteredProducts(updatedProducts);
+  const handleEditProduct = (product) => {
+    setNewProduct(product);
+    setEditProductId(product.id);
+  };
+
+  const handleDeleteProduct = async (id) => {
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/products/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const updatedProducts = products.filter((product) => product.id !== id);
+      setProducts(updatedProducts);
+      setFilteredProducts(updatedProducts);
+    } catch (err) {
+      alert('Greška pri brisanju proizvoda.');
+    }
   };
 
   if (loading) {
@@ -90,7 +118,7 @@ const ProductsTable = () => {
         />
       </div>
       <div className="add-product-container">
-        <h2>Dodaj novi proizvod</h2>
+        <h2>{editProductId ? 'Izmeni proizvod' : 'Dodaj novi proizvod'}</h2>
         <input
           type="text"
           placeholder="Naziv"
@@ -133,7 +161,7 @@ const ProductsTable = () => {
           <option value="active">Aktivan</option>
           <option value="inactive">Neaktivan</option>
         </select>
-        <button onClick={handleAddProduct}>Dodaj proizvod</button>
+        <button onClick={handleAddOrUpdateProduct}>{editProductId ? 'Izmeni proizvod' : 'Dodaj proizvod'}</button>
       </div>
       <table className="products-table">
         <thead>
@@ -159,6 +187,7 @@ const ProductsTable = () => {
               <td>{product.stock || 'N/A'}</td>
               <td>{product.status === 'active' ? 'Aktivan' : 'Neaktivan'}</td>
               <td>
+                <button onClick={() => handleEditProduct(product)}>Izmeni</button>
                 <button onClick={() => handleDeleteProduct(product.id)}>Obriši</button>
               </td>
             </tr>
