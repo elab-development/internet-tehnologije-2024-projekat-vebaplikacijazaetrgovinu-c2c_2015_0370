@@ -7,6 +7,7 @@ import LoginPage from './komponente/LoginPage';
 import Navbar from './komponente/Navbar';
 import ProductsPage from './komponente/ProductsPage';
 import ProductDetailsPage from './komponente/ProductDetailsPage';
+import ProductsTable from './komponente/ProductsTable';
 
 function App() {
   const [authData, setAuthData] = useState({
@@ -35,6 +36,7 @@ function App() {
 
 
 
+          <Route path="/admin/products" element={<ProductsTable />} />
 
 
           
