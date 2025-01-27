@@ -10,6 +10,7 @@ import ProductDetailsPage from './komponente/ProductDetailsPage';
 import ProductsTable from './komponente/ProductsTable';
 import OrderConfirmationPage from './komponente/OrderConfirmationPage';
 import ProductOrdersPage from './komponente/ProductOrdersPage';
+import AdminDashboard from './komponente/AdminDashboard';
 
 function App() {
   const [authData, setAuthData] = useState({
@@ -43,6 +44,7 @@ function App() {
           <Route path="/myProducts" element={<ProductsTable />} />
           <Route path="/product-orders/:productId" element={<ProductOrdersPage />} />
 
+          <Route path="/admin" element={<AdminDashboard />} />
 
           
         </Routes>

@@ -47,6 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products/{productId}/orders', [OrderController::class, 'getOrdersByProduct']);
     Route::put('/orders/{id}/status', [OrderController::class, 'updateOrderStatus']);
 
+    Route::get('/users/stats', [AuthController::class, 'getUsersWithStats']);
+    Route::patch('/users/{id}/role', [AuthController::class, 'changeUserRole']);
 
 });
 

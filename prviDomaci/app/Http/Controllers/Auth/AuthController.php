@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -120,7 +121,20 @@ class AuthController extends Controller
         return response()->json(['message' => 'User role updated successfully.', 'user' => $user], 200);
     }
 
-
+    public function getUsersWithStats()
+    {
+        $users = User::withCount(['products', 'orders'])
+            ->get()
+            ->map(function ($user) {
+                // Dodavanje prosečne ocene za proizvode korisnika
+                $averageRating = Review::whereIn('product_id', $user->products->pluck('id'))->avg('rating');
+                $user->average_rating = $averageRating ?? 0; // Ako nema ocena, vraća 0
+                return $user;
+            });
+    
+        return response()->json($users, 200);
+    }
+    
 
 
 }
