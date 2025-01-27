@@ -95,4 +95,32 @@ class AuthController extends Controller
             'message' => 'User successfully logged out.',
         ], 200);
     }
+
+
+    public function changeUserRole(Request $request, $id)
+    {
+        // Provera da li je korisnik admin
+        if (Auth::user()->tip_korisnika !== 'admin') {
+            return response()->json(['message' => 'Only admins can change user roles.'], 403);
+        }
+
+        // Validacija unosa
+        $validator = Validator::make($request->all(), [
+            'tip_korisnika' => 'required|in:admin,user',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Pronalazak korisnika
+        $user = User::findOrFail($id);
+        $user->update(['tip_korisnika' => $request->tip_korisnika]);
+
+        return response()->json(['message' => 'User role updated successfully.', 'user' => $user], 200);
+    }
+
+
+
+
 }
