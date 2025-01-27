@@ -7,28 +7,25 @@ const Navbar = ({ authData, setAuthData }) => {
 
   const handleLogout = async () => {
     try {
-      // Poziv na API za odjavu
       await axios.post('http://127.0.0.1:8000/api/logout', {}, {
         headers: {
           Authorization: `Bearer ${authData.token}`,
         },
       });
 
-      // Brisanje podataka iz localStorage ili sessionStorage
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user');
       sessionStorage.removeItem('auth_token');
       sessionStorage.removeItem('user');
 
-      // Ažuriranje globalnog stanja
       setAuthData({ token: null, user: null });
-
-      // Navigacija na početnu stranicu
       navigate('/');
     } catch (error) {
       console.error('Error during logout:', error);
     }
   };
+
+  const isAdmin = authData.user?.tip_korisnika === 'admin';
 
   return (
     <header className="header">
@@ -36,9 +33,19 @@ const Navbar = ({ authData, setAuthData }) => {
       <div className="auth-buttons">
         {authData.token ? (
           <>
-            <button className="home-button" onClick={() => navigate('/home')}>Ponuda</button>
-            <button className="home-button" onClick={() => navigate('/myProducts')}>Moji proizvodi</button>
+           {!isAdmin && (
 
+            <>
+              <button className="home-button" onClick={() => navigate('/home')}>Ponuda</button>
+              <button className="home-button" onClick={() => navigate('/myProducts')}>Moji proizvodi</button>
+            </>
+           )}
+            {isAdmin && (
+              <>
+                <button className="home-button" onClick={() => navigate('/admin')}>Admin korisnici</button>
+                <button className="home-button" onClick={() => navigate('/admin/products')}>Admin proizvodi</button>
+              </>
+            )}
             <button className="logout-button" onClick={handleLogout}>Odjavi se</button>
           </>
         ) : (

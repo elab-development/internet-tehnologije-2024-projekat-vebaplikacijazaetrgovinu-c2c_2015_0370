@@ -34,8 +34,12 @@ const LoginPage = ({ setAuthData }) => {
       // Postavljanje globalnog stanja
       setAuthData({ token, user });
 
-      // Navigacija na /home
-      navigate('/home');
+      // Provera uloge korisnika i navigacija
+      if (user.tip_korisnika === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/home');
+      }
     } catch (error) {
       setError(error.response?.data?.message || 'Login failed. Please try again.');
     }
