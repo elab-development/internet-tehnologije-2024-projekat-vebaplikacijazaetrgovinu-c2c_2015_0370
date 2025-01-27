@@ -8,6 +8,7 @@ import Navbar from './komponente/Navbar';
 import ProductsPage from './komponente/ProductsPage';
 import ProductDetailsPage from './komponente/ProductDetailsPage';
 import ProductsTable from './komponente/ProductsTable';
+import OrderConfirmationPage from './komponente/OrderConfirmationPage';
 
 function App() {
   const [authData, setAuthData] = useState({
@@ -33,7 +34,7 @@ function App() {
           <Route path="/login" element={<LoginPage setAuthData={setAuthData} />} />
           <Route path="/home" element={<ProductsPage />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />
-
+          <Route path="/orders/:orderId" element={<OrderConfirmationPage />} />
 
 
           <Route path="/myProducts" element={<ProductsTable />} />

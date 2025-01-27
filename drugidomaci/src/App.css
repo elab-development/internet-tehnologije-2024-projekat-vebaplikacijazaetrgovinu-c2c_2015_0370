@@ -1036,3 +1036,36 @@ body {
   color: #0078d7;
   margin-top: 20px;
 }
+.order-confirmation-page {
+  max-width: 600px;
+  margin: 50px auto;
+  text-align: center;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-icon {
+  font-size: 50px;
+  color: green;
+  margin-bottom: 20px;
+}
+
+.order-details {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.download-invoice-button {
+  background-color: #0078d7;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.download-invoice-button:hover {
+  background-color: #005a99;
+}

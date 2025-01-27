@@ -50,7 +50,10 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $order = Order::where('user_id', Auth::id())->findOrFail($id);
+        $order = Order::with('product') // Uključuje detalje o proizvodu
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
+            
         return response()->json($order, 200);
     }
 

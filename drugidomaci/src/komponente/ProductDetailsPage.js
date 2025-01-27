@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import StarRating from './StarRating';
 import ReviewComponent from './ReviewComponent';
@@ -16,7 +16,7 @@ const ProductDetailsPage = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [orderConfirmation, setOrderConfirmation] = useState(null);
   const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
-
+  const navigate = useNavigate(); 
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
@@ -110,6 +110,7 @@ const ProductDetailsPage = () => {
         }
       );
       setOrderConfirmation(response.data.order);
+      navigate(`/orders/${response.data.order.id}`);
     } catch (err) {
       setError('Greška pri kreiranju narudžbine.');
     }
