@@ -117,5 +117,19 @@ class ProductController extends Controller
 
         return response()->json($products, 200);
     }
+    /**
+     * Display all products belonging to the authenticated user.
+     */
+    public function getMyProducts()
+    {
+        $userId = Auth::id(); // Uzimanje ID-a trenutno ulogovanog korisnika
+        $products = Product::where('user_id', $userId)->get();
 
+        if ($products->isEmpty()) {
+            return response()->json(['message' => 'No products found for the authenticated user.'], 404);
+        }
+
+        return response()->json($products, 200);
+
+    }
 }

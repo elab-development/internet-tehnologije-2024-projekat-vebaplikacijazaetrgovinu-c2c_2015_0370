@@ -36,7 +36,7 @@ function App() {
 
 
 
-          <Route path="/admin/products" element={<ProductsTable />} />
+          <Route path="/myProducts" element={<ProductsTable />} />
 
 
           

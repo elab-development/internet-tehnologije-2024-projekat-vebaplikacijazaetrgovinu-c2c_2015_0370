@@ -7,13 +7,14 @@ import ReviewComponent from './ReviewComponent';
 const ProductDetailsPage = () => {
   const { id } = useParams();
   const [productData, setProductData] = useState(null);
-  const [allReviews, setAllReviews] = useState([]); // Sve recenzije
-  const [visibleReviews, setVisibleReviews] = useState([]); // Prikazane recenzije
+  const [allReviews, setAllReviews] = useState([]);
+  const [visibleReviews, setVisibleReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  const [reviewsToShow, setReviewsToShow] = useState(5); // Broj recenzija koje se prikazuju
-  const [sortBy, setSortBy] = useState('newest'); // Trenutni kriterijum sortiranja
+  const [reviewsToShow, setReviewsToShow] = useState(5);
+  const [sortBy, setSortBy] = useState('newest');
+  const [orderConfirmation, setOrderConfirmation] = useState(null);
   const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
 
   useEffect(() => {
@@ -22,8 +23,8 @@ const ProductDetailsPage = () => {
         const productResponse = await axios.get(`http://127.0.0.1:8000/api/products/${id}`);
         const reviewsResponse = await axios.get(`http://127.0.0.1:8000/api/reviews/product/${id}`);
         setProductData(productResponse.data);
-        setAllReviews(reviewsResponse.data); // Učitavamo sve recenzije odjednom
-        setVisibleReviews(reviewsResponse.data.slice(0, 5)); // Prikazujemo samo prvih 5
+        setAllReviews(reviewsResponse.data);
+        setVisibleReviews(reviewsResponse.data.slice(0, 5));
         setLoading(false);
       } catch (err) {
         setError('Greška pri učitavanju detalja proizvoda ili recenzija.');
@@ -58,7 +59,7 @@ const ProductDetailsPage = () => {
       setReviewSubmitted(true);
       const reviewsResponse = await axios.get(`http://127.0.0.1:8000/api/reviews/product/${id}`);
       setAllReviews(reviewsResponse.data);
-      setVisibleReviews(reviewsResponse.data.slice(0, reviewsToShow)); // Ažuriramo vidljive recenzije
+      setVisibleReviews(reviewsResponse.data.slice(0, reviewsToShow));
     } catch (err) {
       setError('Greška pri slanju recenzije.');
     }
@@ -85,6 +86,35 @@ const ProductDetailsPage = () => {
     setVisibleReviews(sortedReviews.slice(0, reviewsToShow));
   };
 
+  const formatDateForMySQL = (date) => {
+    const offset = date.getTimezoneOffset();
+    const adjustedDate = new Date(date.getTime() - offset * 60 * 1000);
+    return adjustedDate.toISOString().slice(0, 19).replace('T', ' ');
+  };
+
+  const handleOrder = async () => {
+    try {
+      const formattedDate = formatDateForMySQL(new Date());
+      const response = await axios.post(
+        'http://127.0.0.1:8000/api/orders',
+        {
+          order_date: formattedDate,
+          total_price: productData.product.price,
+          status: 'pending',
+          product_id: id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setOrderConfirmation(response.data.order);
+    } catch (err) {
+      setError('Greška pri kreiranju narudžbine.');
+    }
+  };
+
   if (loading) {
     return <div>Učitavanje detalja proizvoda...</div>;
   }
@@ -108,6 +138,17 @@ const ProductDetailsPage = () => {
         <StarRating rating={parseFloat(average_rating)} />
       </p>
 
+      <button className="order-button" onClick={handleOrder}>Naruči</button>
+
+      {orderConfirmation && (
+        <div className="order-confirmation">
+          <h3>Potvrda narudžbine</h3>
+          <p><strong>Broj narudžbine:</strong> {orderConfirmation.id}</p>
+          <p><strong>Ukupna cena:</strong> {orderConfirmation.total_price} RSD</p>
+          <p><strong>Status:</strong> {orderConfirmation.status}</p>
+        </div>
+      )}
+
       {!reviewSubmitted ? (
         <ReviewComponent onSubmitReview={handleSubmitReview} />
       ) : (
@@ -127,7 +168,7 @@ const ProductDetailsPage = () => {
 
       {visibleReviews.map((review) => (
         <div key={review.id} className="review">
-          <p><strong>{review.user?.name}</strong></p> {/* Prikaz imena korisnika */}
+          <p><strong>{review.user?.name}</strong></p>
           <StarRating rating={review.rating} />
           <p>{review.comment}</p>
           <p><em>{new Date(review.created_at).toLocaleDateString()}</em></p>

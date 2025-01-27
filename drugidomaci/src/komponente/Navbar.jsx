@@ -36,7 +36,9 @@ const Navbar = ({ authData, setAuthData }) => {
       <div className="auth-buttons">
         {authData.token ? (
           <>
-            <button className="home-button" onClick={() => navigate('/home')}>Početna</button>
+            <button className="home-button" onClick={() => navigate('/home')}>Ponuda</button>
+            <button className="home-button" onClick={() => navigate('/myProducts')}>Moji proizvodi</button>
+
             <button className="logout-button" onClick={handleLogout}>Odjavi se</button>
           </>
         ) : (

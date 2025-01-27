@@ -8,15 +8,16 @@ const ProductsTable = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCriteria, setFilterCriteria] = useState('name');
-  const [newProduct, setNewProduct] = useState({ name: '', description: '', price: '', category: '', stock: '', status: 'active' });
+  const [newProduct, setNewProduct] = useState({ name: '', description: '', price: '', category: '', stock: '', status: 'active', image_url: '' });
   const [editProductId, setEditProductId] = useState(null);
   const [categories, setCategories] = useState(['Elektronika', 'Odeća', 'Hrana', 'Igračke', 'Nameštaj']);
+  const [newCategory, setNewCategory] = useState('');
   const token = localStorage.getItem('auth_token') || sessionStorage.getItem("auth_token");
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/products', {
+        const response = await axios.get('http://127.0.0.1:8000/api/my-products', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setProducts(response.data);
@@ -47,6 +48,11 @@ const ProductsTable = () => {
 
   const handleAddOrUpdateProduct = async () => {
     try {
+      if (newCategory.trim() !== '' && !categories.includes(newCategory)) {
+        setCategories([...categories, newCategory]);
+        newProduct.category = newCategory;
+      }
+
       if (editProductId) {
         // Update existing product
         const response = await axios.put(`http://127.0.0.1:8000/api/products/${editProductId}`, newProduct, {
@@ -66,7 +72,8 @@ const ProductsTable = () => {
         setProducts([...products, response.data.product]);
         setFilteredProducts([...products, response.data.product]);
       }
-      setNewProduct({ name: '', description: '', price: '', category: '', stock: '', status: 'active' });
+      setNewProduct({ name: '', description: '', price: '', category: '', stock: '', status: 'active', image_url: '' });
+      setNewCategory('');
     } catch (err) {
       alert('Greška pri dodavanju ili ažuriranju proizvoda.');
     }
@@ -100,7 +107,7 @@ const ProductsTable = () => {
 
   return (
     <div className="products-table-container">
-      <h1>Lista proizvoda</h1>
+      <h1>Lista mojih proizvoda</h1>
       <div className="search-container">
         <select onChange={handleFilterChange} value={filterCriteria} className="filter-select">
           <option value="name">Naziv</option>
@@ -149,10 +156,22 @@ const ProductsTable = () => {
           ))}
         </select>
         <input
+          type="text"
+          placeholder="Dodaj novu kategoriju"
+          value={newCategory}
+          onChange={(e) => setNewCategory(e.target.value)}
+        />
+        <input
           type="number"
           placeholder="Stanje"
           value={newProduct.stock}
           onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
+        />
+        <input
+          type="text"
+          placeholder="Link slike"
+          value={newProduct.image_url}
+          onChange={(e) => setNewProduct({ ...newProduct, image_url: e.target.value })}
         />
         <select
           value={newProduct.status}
@@ -172,6 +191,7 @@ const ProductsTable = () => {
             <th>Cena</th>
             <th>Kategorija</th>
             <th>Stanje</th>
+            <th>Slika</th>
             <th>Status</th>
             <th>Akcije</th>
           </tr>
@@ -185,6 +205,7 @@ const ProductsTable = () => {
               <td>{product.price} RSD</td>
               <td>{product.category || 'N/A'}</td>
               <td>{product.stock || 'N/A'}</td>
+              <td><img src={product.image_url} alt={product.name} style={{ width: '50px', height: '50px' }} /></td>
               <td>{product.status === 'active' ? 'Aktivan' : 'Neaktivan'}</td>
               <td>
                 <button onClick={() => handleEditProduct(product)}>Izmeni</button>

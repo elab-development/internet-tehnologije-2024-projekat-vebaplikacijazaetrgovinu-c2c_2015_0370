@@ -44,7 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/reviews/{id}', [ReviewController::class, 'update']);
     Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
 
-
+    Route::get('/my-products', [ProductController::class, 'getMyProducts']);  //vraca sve proizvode koje je kreirao ulogovani korisnik
     Route::apiResource('orders', OrderController::class);
 });
 
