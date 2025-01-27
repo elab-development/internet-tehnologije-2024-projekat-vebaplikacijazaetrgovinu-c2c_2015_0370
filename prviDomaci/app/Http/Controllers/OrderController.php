@@ -89,4 +89,39 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Order deleted successfully.'], 200);
     }
+
+    public function getOrdersByProduct($productId)
+    {
+        $orders = Order::with('user') // Dodajemo podatke o korisniku
+            ->where('product_id', $productId)
+            ->get();
+        return response()->json($orders, 200);
+    }
+
+    public function updateOrderStatus(Request $request, $id)
+    {
+        $order = Order::with('product')->findOrFail($id);
+
+        if ($order->status !== 'pending') {
+            return response()->json(['message' => 'Order status is already updated.'], 400);
+        }
+
+        // Provera dostupnosti zaliha
+        $product = $order->product;
+        if ($product->stock < 1) {
+            return response()->json(['message' => 'Not enough stock for this product.'], 400);
+        }
+
+        // Ažuriranje statusa i smanjenje stanja
+        $order->status = 'completed';
+        $order->save();
+
+        $product->stock -= 1;
+        $product->save();
+
+        return response()->json(['message' => 'Order status updated successfully.', 'order' => $order], 200);
+    }
+
+
+
 }

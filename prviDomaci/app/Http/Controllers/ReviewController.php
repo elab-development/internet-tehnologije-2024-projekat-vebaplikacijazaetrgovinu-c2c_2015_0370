@@ -108,10 +108,7 @@ class ReviewController extends Controller
             ->with('user:id,name') // Učitavamo samo ID i ime korisnika
             ->get();
 
-        if ($reviews->isEmpty()) {
-            return response()->json(['message' => 'No reviews found for this product.'], 404);
-        }
-
+ 
         return response()->json($reviews, 200);
     }
 

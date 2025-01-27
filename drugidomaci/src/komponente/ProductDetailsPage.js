@@ -16,18 +16,20 @@ const ProductDetailsPage = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [orderConfirmation, setOrderConfirmation] = useState(null);
   const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
         const productResponse = await axios.get(`http://127.0.0.1:8000/api/products/${id}`);
         const reviewsResponse = await axios.get(`http://127.0.0.1:8000/api/reviews/product/${id}`);
+
         setProductData(productResponse.data);
-        setAllReviews(reviewsResponse.data);
-        setVisibleReviews(reviewsResponse.data.slice(0, 5));
+        setAllReviews(reviewsResponse.data || []);
+        setVisibleReviews(reviewsResponse.data.slice(0, 5) || []);
         setLoading(false);
       } catch (err) {
-        setError('Greška pri učitavanju detalja proizvoda ili recenzija.');
+        setError('Greška pri učitavanju detalja proizvoda.');
         setLoading(false);
       }
     };
@@ -58,8 +60,9 @@ const ProductDetailsPage = () => {
       );
       setReviewSubmitted(true);
       const reviewsResponse = await axios.get(`http://127.0.0.1:8000/api/reviews/product/${id}`);
-      setAllReviews(reviewsResponse.data);
-      setVisibleReviews(reviewsResponse.data.slice(0, reviewsToShow));
+      const reviews = reviewsResponse.data || [];
+      setAllReviews(reviews);
+      setVisibleReviews(reviews.slice(0, reviewsToShow));
     } catch (err) {
       setError('Greška pri slanju recenzije.');
     }
@@ -124,6 +127,10 @@ const ProductDetailsPage = () => {
     return <div>{error}</div>;
   }
 
+  if (!productData) {
+    return <div>Proizvod nije pronađen.</div>;
+  }
+
   const { product, average_rating } = productData;
 
   return (
@@ -141,15 +148,6 @@ const ProductDetailsPage = () => {
 
       <button className="order-button" onClick={handleOrder}>Naruči</button>
 
-      {orderConfirmation && (
-        <div className="order-confirmation">
-          <h3>Potvrda narudžbine</h3>
-          <p><strong>Broj narudžbine:</strong> {orderConfirmation.id}</p>
-          <p><strong>Ukupna cena:</strong> {orderConfirmation.total_price} RSD</p>
-          <p><strong>Status:</strong> {orderConfirmation.status}</p>
-        </div>
-      )}
-
       {!reviewSubmitted ? (
         <ReviewComponent onSubmitReview={handleSubmitReview} />
       ) : (
@@ -157,26 +155,31 @@ const ProductDetailsPage = () => {
       )}
 
       <h3>Recenzije</h3>
-      <div>
-        <label htmlFor="sort-reviews">Sortiraj po: </label>
-        <select id="sort-reviews" value={sortBy} onChange={handleSortChange}>
-          <option value="newest">Najnovije</option>
-          <option value="oldest">Najstarije</option>
-          <option value="highest_rating">Najviše ocene</option>
-          <option value="lowest_rating">Najniže ocene</option>
-        </select>
-      </div>
-
-      {visibleReviews.map((review) => (
-        <div key={review.id} className="review">
-          <p><strong>{review.user?.name}</strong></p>
-          <StarRating rating={review.rating} />
-          <p>{review.comment}</p>
-          <p><em>{new Date(review.created_at).toLocaleDateString()}</em></p>
+      {allReviews.length === 0 ? (
+        <p>Trenutno nema recenzija za ovaj proizvod.</p>
+      ) : (
+        <div>
+          <div>
+            <label htmlFor="sort-reviews">Sortiraj po: </label>
+            <select id="sort-reviews" value={sortBy} onChange={handleSortChange}>
+              <option value="newest">Najnovije</option>
+              <option value="oldest">Najstarije</option>
+              <option value="highest_rating">Najviše ocene</option>
+              <option value="lowest_rating">Najniže ocene</option>
+            </select>
+          </div>
+          {visibleReviews.map((review) => (
+            <div key={review.id} className="review">
+              <p><strong>{review.user?.name}</strong></p>
+              <StarRating rating={review.rating} />
+              <p>{review.comment}</p>
+              <p><em>{new Date(review.created_at).toLocaleDateString()}</em></p>
+            </div>
+          ))}
+          {visibleReviews.length < allReviews.length && (
+            <button onClick={loadMoreReviews}>Prikaži još</button>
+          )}
         </div>
-      ))}
-      {visibleReviews.length < allReviews.length && (
-        <button onClick={loadMoreReviews}>Prikaži još</button>
       )}
     </div>
   );

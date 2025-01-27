@@ -39,7 +39,7 @@ const OrderConfirmationPage = () => {
   
     // Dodavanje naslova
     doc.setFontSize(20);
-    doc.text('FAKTURA', 105, 20, null, null, 'center');
+    doc.text('POTVRDA', 105, 20, null, null, 'center');
   
     // Informacije o narudžbini
     doc.setFontSize(12);
@@ -70,7 +70,7 @@ const OrderConfirmationPage = () => {
     doc.text('Hvala na kupovini!', 105, footerY, null, null, 'center');
   
     // Preuzimanje PDF-a
-    doc.save(`Faktura_${orderDetails.id}.pdf`);
+    doc.save(`POTVRDA_${orderDetails.id}.pdf`);
   };
   
 
@@ -92,7 +92,7 @@ const OrderConfirmationPage = () => {
         <p><strong>Status:</strong> {orderDetails.status}</p>
         <p><strong>Datum narudžbine:</strong> {new Date(orderDetails.order_date).toLocaleString()}</p>
       </div>
-      <button className="download-invoice-button" onClick={generatePDFInvoice}>Preuzmi fakturu (PDF)</button>
+      <button className="download-invoice-button" onClick={generatePDFInvoice}>Preuzmi potvrdu (PDF)</button>
     </div>
   );
 };

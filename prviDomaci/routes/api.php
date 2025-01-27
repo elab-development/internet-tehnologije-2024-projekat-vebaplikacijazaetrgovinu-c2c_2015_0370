@@ -44,6 +44,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/my-products', [ProductController::class, 'getMyProducts']);  //vraca sve proizvode koje je kreirao ulogovani korisnik
     Route::apiResource('orders', OrderController::class);
+    Route::get('/products/{productId}/orders', [OrderController::class, 'getOrdersByProduct']);
+    Route::put('/orders/{id}/status', [OrderController::class, 'updateOrderStatus']);
+
+
 });
 
 

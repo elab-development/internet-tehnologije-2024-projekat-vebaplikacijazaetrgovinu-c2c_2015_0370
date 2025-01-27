@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ProductsTable = () => {
   const [products, setProducts] = useState([]);
@@ -13,7 +14,7 @@ const ProductsTable = () => {
   const [categories, setCategories] = useState(['Elektronika', 'Odeća', 'Hrana', 'Igračke', 'Nameštaj']);
   const [newCategory, setNewCategory] = useState('');
   const token = localStorage.getItem('auth_token') || sessionStorage.getItem("auth_token");
-
+    let navigate =  useNavigate();
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -96,7 +97,9 @@ const ProductsTable = () => {
       alert('Greška pri brisanju proizvoda.');
     }
   };
-
+    const viewOrders = (productId) => {
+        navigate(`/product-orders/${productId}`);
+    };
   if (loading) {
     return <div className="loading">Učitavanje...</div>;
   }
@@ -209,7 +212,8 @@ const ProductsTable = () => {
               <td>{product.status === 'active' ? 'Aktivan' : 'Neaktivan'}</td>
               <td>
                 <button onClick={() => handleEditProduct(product)}>Izmeni</button>
-                <button onClick={() => handleDeleteProduct(product.id)}>Obriši</button>
+                <button onClick={() => handleDeleteProduct(product.id)}>Obriši</button> 
+                <button onClick={() => viewOrders(product.id)}>Pregledaj porudžbine</button>
               </td>
             </tr>
           ))}
