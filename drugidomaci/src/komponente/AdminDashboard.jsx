@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useReactTable, getCoreRowModel, flexRender } from '@tanstack/react-table';
-import { Table, TableHead, TableRow, TableCell, TableBody, Button } from '@mui/material';
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  flexRender,
+} from '@tanstack/react-table';
+import { Table, TableHead, TableRow, TableCell, TableBody, Button, Select, MenuItem } from '@mui/material';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -9,6 +15,7 @@ const AdminDashboard = () => {
   const [error, setError] = useState(null);
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
+  const [sorting, setSorting] = useState([]);
   const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
 
   useEffect(() => {
@@ -28,6 +35,25 @@ const AdminDashboard = () => {
     fetchUsers();
   }, [token]);
 
+  const handleRoleChange = async (userId, newRole) => {
+    try {
+      const response = await axios.patch(
+        `http://127.0.0.1:8000/api/users/${userId}/role`,
+        { tip_korisnika: newRole },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const updatedUser = response.data.user;
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+      );
+      alert('Uloga korisnika uspešno promenjena.');
+    } catch (err) {
+      alert('Došlo je do greške prilikom promene uloge.');
+    }
+  };
+
   const columns = [
     { accessorKey: 'id', header: 'ID' },
     { accessorKey: 'name', header: 'Ime' },
@@ -38,18 +64,38 @@ const AdminDashboard = () => {
       accessorKey: 'average_rating',
       header: 'Prosečna ocena',
       cell: ({ getValue }) => {
-        const rating = parseFloat(getValue()); // Konvertovanje u broj
-        return !isNaN(rating) ? rating.toFixed(2) : 'N/A'; // Provera validnosti
+        const rating = parseFloat(getValue());
+        return !isNaN(rating) ? rating.toFixed(2) : 'N/A';
       },
     },
-    { accessorKey: 'tip_korisnika', header: 'Tip korisnika' },
+    {
+      accessorKey: 'tip_korisnika',
+      header: 'Tip korisnika',
+      cell: ({ row }) => (
+        <Select
+          value={row.original.tip_korisnika}
+          onChange={(e) => handleRoleChange(row.original.id, e.target.value)}
+        >
+          <MenuItem value="admin">Admin</MenuItem>
+          <MenuItem value="user">User</MenuItem>
+        </Select>
+      ),
+    },
   ];
 
   const table = useReactTable({
     data: users,
     columns,
-    state: { pagination: { pageIndex, pageSize } },
+    state: { pagination: { pageIndex, pageSize }, sorting },
+    onPaginationChange: (updater) => {
+      const newState = typeof updater === 'function' ? updater({ pageIndex, pageSize }) : updater;
+      setPageIndex(newState.pageIndex);
+      setPageSize(newState.pageSize);
+    },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   if (loading) {
@@ -68,8 +114,10 @@ const AdminDashboard = () => {
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableCell key={header.id}>
-                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                <TableCell key={header.id} onClick={header.column.getToggleSortingHandler()} style={{ cursor: 'pointer' }}>
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                  {header.column.getIsSorted() === 'asc' && ' 🔼'}
+                  {header.column.getIsSorted() === 'desc' && ' 🔽'}
                 </TableCell>
               ))}
             </TableRow>
@@ -86,17 +134,13 @@ const AdminDashboard = () => {
         </TableBody>
       </Table>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Button variant="contained" onClick={() => setPageIndex((old) => Math.max(old - 1, 0))} disabled={pageIndex === 0}>
+        <Button variant="contained" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
           Prethodna
         </Button>
         <span>
-          Stranica {pageIndex + 1} od {Math.ceil(users.length / pageSize)}
+          Stranica {pageIndex + 1} od {table.getPageCount()}
         </span>
-        <Button
-          variant="contained"
-          onClick={() => setPageIndex((old) => Math.min(old + 1, Math.ceil(users.length / pageSize) - 1))}
-          disabled={pageIndex === Math.ceil(users.length / pageSize) - 1}
-        >
+        <Button variant="contained" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
           Sledeća
         </Button>
       </div>
@@ -105,7 +149,7 @@ const AdminDashboard = () => {
           Broj redova:
           <select
             value={pageSize}
-            onChange={(e) => setPageSize(Number(e.target.value))}
+            onChange={(e) => table.setPageSize(Number(e.target.value))}
             style={{ marginLeft: '5px' }}
           >
             {[5, 10, 20].map((size) => (
