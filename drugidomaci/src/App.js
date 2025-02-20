@@ -33,7 +33,7 @@ function App() {
         <Navbar authData={authData} setAuthData={setAuthData} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/register" element={<RegisterPage setAuthData={setAuthData} />} />
           <Route path="/login" element={<LoginPage setAuthData={setAuthData} />} />
           <Route path="/home" element={<ProductsPage />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />

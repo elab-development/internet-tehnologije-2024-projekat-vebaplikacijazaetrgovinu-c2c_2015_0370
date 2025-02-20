@@ -99,7 +99,7 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        $product = Product::where('user_id', Auth::id())->findOrFail($id);
+        $product = Product::findOrFail($id);
         $product->delete();
 
         return response()->json(['message' => 'Product deleted successfully.'], 200);
@@ -125,9 +125,7 @@ class ProductController extends Controller
         $userId = Auth::id(); // Uzimanje ID-a trenutno ulogovanog korisnika
         $products = Product::where('user_id', $userId)->get();
 
-        if ($products->isEmpty()) {
-            return response()->json(['message' => 'No products found for the authenticated user.'], 404);
-        }
+ 
 
         return response()->json($products, 200);
 

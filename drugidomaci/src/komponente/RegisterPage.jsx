@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from './Button';
 import InputField from './InputField';
 
-const RegisterPage = () => {
+const RegisterPage = ({ setAuthData }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,25 +19,38 @@ const RegisterPage = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ 
+      ...formData, 
+      [e.target.name]: e.target.value 
+    });
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
     try {
+      // Slanje podataka na vaš Laravel endpoint za registraciju
       const response = await axios.post('http://127.0.0.1:8000/api/register', formData);
 
+      // Ako je uspešna registracija, dobijamo token i user-a
       const { token, user } = response.data;
 
-      // Save token and user in local storage
+      // Pamtimo token i user-a (recimo u localStorage)
       localStorage.setItem('auth_token', token);
       localStorage.setItem('user', JSON.stringify(user));
 
-      // Navigate to /home
+      // Ažuriramo globalno stanje kako bi se Navbar osvežio
+      setAuthData({ token, user });
+
+      // Preusmeravamo na /home
       navigate('/home');
-    } catch (error) {
-      setError(error.response?.data?.errors || 'Registration failed. Please try again.');
+    } catch (err) {
+      // U Laravelu se može vratiti validation errors
+      // pa ih ovde čuvamo u state da prikažemo korisniku
+      const fallback = 'Registration failed. Please try again.';
+      // Ako postoje greške, možda su u err.response.data.errors
+      // ili u err.response.data.message, zavisi od API-a
+      setError(err.response?.data?.errors || err.response?.data?.message || fallback);
     }
   };
 
@@ -107,7 +120,7 @@ const RegisterPage = () => {
               value={formData.bio}
               onChange={handleChange}
               className="input-field"
-            ></textarea>
+            />
           </div>
           {error && <p className="error-message">{JSON.stringify(error)}</p>}
           <Button text="Register" type="submit" className="primary" />
