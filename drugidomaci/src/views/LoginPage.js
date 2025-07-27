@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Button from './Button';
-import InputField from './InputField';
+import Button from '../komponente/Button';
+import InputField from '../komponente/InputField';
 
 const LoginPage = ({ setAuthData }) => {
   const [email, setEmail] = useState('jelena.kondic33@gmail.com');
